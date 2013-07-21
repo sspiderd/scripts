@@ -1,0 +1,17 @@
+#! /bin/sh
+
+case "$1" in
+	start)
+		#add the bridge and bring it up
+		brctl addbr intbr
+		ifconfig intbr 20.0.0.1 netmask 255.255.255.0 broadcast 20.0.0.255 up
+		
+		#Set up router
+		iptables --table nat --append POSTROUTING --out-interface eth1 -j MASQUERADE
+		iptables --append FORWARD --in-interface intbr -j ACCEPT
+
+		#Add local dns to resolve.conf
+		sed -i '1s/^/nameserver 127.0.0.1\n/' /etc/resolv.conf
+	;;
+esac
+exit 0

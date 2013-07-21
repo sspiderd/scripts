@@ -1,0 +1,4 @@
+mkdir -p /var/lib/tomcat7/webapps/ROOT/WEB-INF/com/ravello/management
+ln -s $WORKSPACE/ManagementServer/target/classes/com/ravello/management/server /var/lib/tomcat7/webapps/ROOT/WEB-INF/classes/com/ravello/management/server
+ln -s $WORKSPACE/ManagementCommon/target/classes/com/ravello/management/common /var/lib/tomcat7/webapps/ROOT/WEB-INF/classes/com/ravello/management/common
+sudo chown -R tomcat7:tomcat7 /var/lib/tomcat7/webapps/ROOT/WEB-INF

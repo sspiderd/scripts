@@ -1,0 +1,102 @@
+#!/usr/bin/env python
+
+'''
+
+This will help automate the maven script for building and deploying
+you do not need to run this with "/usr/run/python" if you are on linux.
+don't forget to give execution permissions..
+
+Created on Dec 11, 2012
+
+@author: ilan
+'''
+
+import argparse
+import subprocess
+import os
+import sys
+from os.path import expanduser
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-w", "--workspace", help="location of the workspace. environment variable \"WORKSPACE\" can be used instead")
+    parser.add_argument("-p", "--profile", help="run maven with this profile")
+    parser.add_argument("-t", "--tests", help="run maven with unit tests", action="store_true")
+    parser.add_argument("-g", "--gui", help="compile with GUI", action="store_true")
+    parser.add_argument("-S", "--simulation", help="package with cloud-backend simulator instead of the real thing", action="store_true")
+    parser.add_argument("-s", "--serverOnly", help="compile only common, server, and webapp modules", action="store_true")
+    parser.add_argument("-d", "--deploy", help="deploy build to server", action="store_true")
+    parser.add_argument("-f", "--fastdeploy", help="deploy only WEB-INF folder, common.jar and server.jar", action="store_true")
+    parser.add_argument("-l", "--parallel", help="runs the build in parallel threads", action="store_true")
+    parser.add_argument("-D", "--deployOnly", help="only deploys webapp to tomcat, does not compile", action="store_true")
+    
+    args = parser.parse_args()
+    
+    if (args.deploy and args.fastdeploy):
+        print "Cannot use both 'deploy' and 'fastdeploy' feature. choose one or the other"
+        sys.exit()
+    
+    command = "mvn "
+    
+    workspace = ""
+    if (args.workspace):
+        workspace = args.workspace
+    elif (os.getenv("WORKSPACE") != None):
+        workspace = os.getenv("WORKSPACE")
+        
+    if (workspace != ""):
+        workspace = workspace.replace("~", expanduser("~"))
+        command += "-f " + workspace + "/ManagementParent/pom.xml "
+        
+    
+    if (args.profile):
+        command += "-P" + args.profile + " "
+    
+    if (args.tests):
+        command += "-DskipTests=false "
+    else:
+        command += "-DskipTests=true "
+        
+    if (args.gui):
+        command += "-DGUI "
+  
+    if (args.serverOnly):
+        command += "-DserverOnly "
+        
+    if (args.parallel):
+        command += " -T 4 "
+
+    if(args.simulation):
+	command += " -Dsimulation "
+    
+    command += "clean install"
+
+    if (args.tests):
+	command = command.replace("install", "test")
+    
+    if (not args.deployOnly):
+	print "Executing: " + command
+    
+	failure = subprocess.call(command.split())
+    else: 
+	failure = False
+   
+    
+    #After the build has run successfully, we can deploy
+    if (args.fastdeploy and not failure and not args.deployOnly):
+        command = command.replace("clean install", "tcdeploy:fast")
+        print "Executing: " + command
+        failure = subprocess.call(command.split()) 
+    
+    if ((args.deploy or args.deployOnly) and not failure):
+        command = command.replace("clean install", "tcdeploy:prepare")
+        print "Executing: " + command
+        failure = subprocess.call(command.split()) 
+        
+        if (not failure):
+        
+            command = command.replace("prepare", "deploy")
+            print "Executing: " + command
+            subprocess.call(command.split())
+    

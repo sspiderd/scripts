@@ -1,0 +1,2 @@
+# $1 the public certificate
+openssl x509 -inform pem -in $1 -noout -pubkey

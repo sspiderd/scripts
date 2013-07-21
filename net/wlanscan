@@ -1,0 +1,1 @@
+sudo tshark -I -V -i wlan0

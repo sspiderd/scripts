@@ -1,0 +1,4 @@
+#! /bin/bash
+RUN=/tmp/run.sh
+IP=`curl http://ipecho.net/plain`
+sed 's/\(JMX_ARGS.*hostname=\)\(.*\)/\1'$IP'/' $RUN

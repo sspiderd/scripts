@@ -1,0 +1,2 @@
+# $1 certificate file prefix (cert, chain, key), $2 certificate name
+iam-servercertupload -b $1.crt -c $1.crt.chain -k $1.key -s $2
