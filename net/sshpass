@@ -1,1 +1,2 @@
+#Connect to ssh host without offering any public keys
 ssh -o PubkeyAuthentication=no $1
