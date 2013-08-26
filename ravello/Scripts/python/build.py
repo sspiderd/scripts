@@ -68,10 +68,8 @@ if __name__ == '__main__':
         command += " -T 4 "
 
     if(args.simulation):
-	command += " -Dsimulation -Dslowsimulation "
+	command += " -Dsimulation "
     
-    command += " -e "
-
     command += "clean install"
 
     if (args.tests):
