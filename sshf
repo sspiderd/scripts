@@ -1,16 +1,18 @@
-#!/bin/bash
-#Replaces ssh calls with ip instead of dns for fast access
-#Author Ilan G
+#!/usr/bin/env ruby
 
-for ARG in $@
-do
-  if [[ $ARG =~ (.*)@(.*) ]]
-  then
-    REPLACED=`dig ${BASH_REMATCH[2]} | grep IN | head -2 | tail -1 | sed 's/\s\+/ /g' | cut -d' ' -f5`
-    RUN="$RUN ${BASH_REMATCH[1]}@$REPLACED"
-  else
-    RUN="$RUN $ARG"
-  fi
-done
+require 'dnsruby'
+include Dnsruby
 
-ssh $RUN
+run_line = 'ssh '
+res = Dnsruby::Resolver.new
+
+ARGV.each do |arg|
+  if arg =~ /(.*)@(.*)/
+  	ip = res.query($2).answer[0].to_s.split(" ")[4]
+  	run_line += "#{$1}@#{ip} "
+  elsif
+  	run_line += arg + " "
+  end
+end
+
+system(run_line)
