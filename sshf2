@@ -1,0 +1,16 @@
+#!/bin/bash
+#Replaces ssh calls with ip instead of dns for fast access
+
+
+for ARG in $@
+do
+  if [[ $ARG =~ (.*)@(.*) ]]
+  then
+    REPLACED=`dig ${BASH_REMATCH[2]} | grep IN | head -2 | tail -1 | sed 's/\s\+/ /g' | cut -d' ' -f5`
+    RUN="$RUN ${BASH_REMATCH[1]}@$REPLACED"
+  else
+    RUN="$RUN $ARG"
+  fi
+done
+
+ssh $RUN
