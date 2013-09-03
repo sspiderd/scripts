@@ -1,6 +1,6 @@
 #!/bin/bash
 #Replaces ssh calls with ip instead of dns for fast access
-
+#Author Ilan G
 
 for ARG in $@
 do
