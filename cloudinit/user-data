@@ -1,0 +1,4 @@
+#!/bin/sh
+userdel ilan
+sudo useradd -d /home/ilan -G sudo -m -p qweasd -s /bin/bash ilan
+echo 'ilan:qweasd' | chpasswd

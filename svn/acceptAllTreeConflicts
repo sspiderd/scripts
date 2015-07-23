@@ -1,0 +1,1 @@
+svn st | grep ^.*C\\s | sed s/^.*C\\s// | xargs svn resolve --accept working

@@ -1,0 +1,1 @@
+nmap -A -T4 -p- -PP -PE $1

@@ -1,0 +1,3 @@
+sudo service postgresql restart
+sudo su postgres -c "psql -c 'drop database management ;'"
+sudo su postgres -c "psql -c 'create database management with owner management;'"

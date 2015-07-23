@@ -1,0 +1,20 @@
+#!/bin/bash
+
+IP_SITES=(
+	http://bot.whatismyipaddress.com 
+	http://icanhazip.com/
+	http://ipecho.net/plain)
+
+IP_REGEX="(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}"
+
+FINAL_IP=0.0.0.0
+
+for ipSite in "${IP_SITES[@]}"; do
+	IP=`curl -s $ipSite`
+	if [[ $IP =~ $IP_REGEX ]]; then
+		FINAL_IP=$IP
+		break
+	fi
+done
+
+echo $FINAL_IP
